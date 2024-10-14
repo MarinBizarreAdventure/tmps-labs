@@ -2,7 +2,7 @@
 using Domain.Models;
 namespace Application.Services;
 
-public class TaskService : ITaskService
+public class TaskService : ITaskService, IRecurringTaskService
 {
     // SRP (Single Responsibility Principle)
     // The TaskService handles business logic related to tasks (creating, updating, deleting),
@@ -16,16 +16,25 @@ public class TaskService : ITaskService
     // This allows for easy swapping of implementations (e.g., using a mock repository for testing).
     
     private readonly ITaskRepository _taskRepository;
+    private readonly IRecurringTaskRepository _recurringTaskRepository;
 
-    public TaskService(ITaskRepository taskRepository)
+
+    public TaskService(ITaskRepository taskRepository, IRecurringTaskRepository  recurringTaskRepository)
     {
         _taskRepository = taskRepository;
+        _recurringTaskRepository = recurringTaskRepository;
     }
 
     public bool CreateTask(string title, string description)
     {
         var task = new Domain.Models.Task(title, description);
         return _taskRepository.AddTask(task);
+    }
+    
+    public bool CreateRecurringTask(string title, string description, int frequencyInDays)
+    {
+        var recurringTask = new RecurringTask(title, description, frequencyInDays);
+        return _taskRepository.AddTask(recurringTask);
     }
 
     public bool UpdateTask(int id, string title, string description)
@@ -54,6 +63,27 @@ public class TaskService : ITaskService
     {
         return _taskRepository.GetAllTasks();
     }
+    
+    public int GetRecurrenceFrequency(RecurringTask recurringTask)
+    {
+        return _recurringTaskRepository.GetRecurrenceFrequency(recurringTask);
+    }
 
+    
+    
+    public int GetRecurrenceFrequency(int taskId)
+    {
+        var recurringTask = _taskRepository.GetTask(taskId) as RecurringTask;
+        if (recurringTask == null) throw new Exception("Task is not a recurring task.");
+        return _recurringTaskRepository.GetRecurrenceFrequency(recurringTask);
+    }
+
+    public bool SetRecurrenceFrequency(int taskId, int frequencyInDays)
+    {
+        var recurringTask = _taskRepository.GetTask(taskId) as RecurringTask;
+        if (recurringTask == null) throw new Exception("Task is not a recurring task.");
+        recurringTask.SetFrequency(frequencyInDays);
+        return true;
+    }
 
 }

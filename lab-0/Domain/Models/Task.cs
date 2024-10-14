@@ -35,4 +35,9 @@ public class Task
         Title = title;
         Description = description;
     }
+    
+    public virtual string GetTaskDetails()
+    {
+        return $"Task ID: {Id}, Title: {Title}, Description: {Description}, Completed: {IsCompleted}";
+    }
 }
