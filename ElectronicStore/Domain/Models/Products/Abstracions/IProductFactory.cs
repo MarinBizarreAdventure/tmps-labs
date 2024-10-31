@@ -2,5 +2,5 @@
 
 public interface IProductFactory
 {
-    
+    IProduct CreateProduct(string type);
 }
