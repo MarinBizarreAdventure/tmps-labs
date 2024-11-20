@@ -1,8 +1,10 @@
-﻿using Domain.Models.Products.Abstracions;
+﻿using Domain.Models.Orders.Abstractions;
+using Domain.Models.Products.Abstracions;
+using Microsoft.VisualBasic;
 
 namespace Domain.Models.Products;
 
-public class Product: IProduct
+public class Product: IProduct, IOrderComponent 
 {
     public string Id { get; set; }
     public string Name { get; set; }
@@ -30,11 +32,16 @@ public class Product: IProduct
         Console.WriteLine($"ID: {Id}");
         Console.WriteLine($"Name: {Name}");
         Console.WriteLine($"Description: {Description}");
-        Console.WriteLine($"Price: {Price:C}");
+        Console.WriteLine($"Price: {CalculateTotalPrice():C}");
         Console.WriteLine($"Brand: {Brand}");
         Console.WriteLine($"Color: {Color}");
         Console.WriteLine($"Stock Quantity: {StockQuantity}");
         Console.WriteLine("-----------------------------------");
+    }
+    
+    public decimal CalculateTotalPrice()
+    {
+        return Price;
     }
 
 }

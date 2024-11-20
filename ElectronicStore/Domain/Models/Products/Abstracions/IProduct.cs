@@ -1,6 +1,8 @@
-﻿namespace Domain.Models.Products.Abstracions;
+﻿using Domain.Models.Orders.Abstractions;
 
-public interface IProduct
+namespace Domain.Models.Products.Abstracions;
+
+public interface IProduct : IOrderComponent
 {
     string Id { get; set; }
     string Name { get; set; }
@@ -11,5 +13,7 @@ public interface IProduct
     int StockQuantity { get; set; }
 
     void DisplayProductDetails();
+    decimal CalculateTotalPrice();
+
     IProduct Clone();
 }

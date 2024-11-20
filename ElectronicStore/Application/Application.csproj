@@ -18,4 +18,8 @@
       <Folder Include="Services\Validators\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
 </Project>
