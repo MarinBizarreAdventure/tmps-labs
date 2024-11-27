@@ -1,10 +1,11 @@
-﻿using Domain.Models.Orders.Abstractions;
+﻿using Domain.Abstractions;
+using Domain.Models.Orders.Abstractions;
 using Domain.Models.Products.Abstracions;
 using Microsoft.VisualBasic;
 
 namespace Domain.Models.Products;
 
-public class Product: IProduct, IOrderComponent 
+public class Product: IProduct, ISubject 
 {
     public string Id { get; set; }
     public string Name { get; set; }
@@ -12,8 +13,38 @@ public class Product: IProduct, IOrderComponent
     public decimal Price { get; set; }
     public string Brand { get; set; }
     public string Color { get; set; }
-    public int StockQuantity { get; set; }
+    private int _stockQuantity { get; set; }
+    
+    public int StockQuantity
+    {
+        get => _stockQuantity;
+        set
+        {
+            _stockQuantity = value;
+            if (_stockQuantity > 0) NotifyObservers($"Product '{Name}' is back in stock!");
+        }
+    }
+    
+    private readonly List<IObserver> _observers = new();
 
+    public void AddObserver(IObserver observer)
+    {
+        _observers.Add(observer);
+    }
+
+    public void RemoveObserver(IObserver observer)
+    {
+        _observers.Remove(observer);
+    }
+
+    public void NotifyObservers(string message)
+    {
+        foreach (var observer in _observers)
+        {
+            observer.Update(message);
+        }
+    }
+    
     public virtual IProduct Clone()
     {
         return new Product

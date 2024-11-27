@@ -1,4 +1,5 @@
 ﻿using Application.Services.Facade;
+using Domain.Models.Customers;
 using Domain.Models.Products.Concrete;
 
 class Program
@@ -6,7 +7,13 @@ class Program
     static void Main(string[] args)
     {
         var storeFacade = new StoreFacade();
-
+        
+        var customer1 = new Customer("Alice");
+        var customer2 = new Customer("Bob");
+        
+        storeFacade.RegisterCustomer(customer1);
+        storeFacade.RegisterCustomer(customer2);
+        
         var laptop = new LaptopBuilder()
             .SetOperatingSystem("Windows 11")
             .SetProcessor("Intel Core i7")
@@ -40,12 +47,16 @@ class Program
         storeFacade.AddProductToStore(laptop);
         storeFacade.AddProductToStore(smartphone);
 
+        // Simulate stock change to notify observers
+        laptop.StockQuantity = 5; 
+        smartphone.StockQuantity = 1; 
+        
         var order = storeFacade.CreateNewOrder("1", "Customer's Order");
 
         storeFacade.AddProductToOrder(laptop);
         storeFacade.AddProductToOrder(smartphone);
 
-        var laptopWithWarranty = storeFacade.AddWarrantyToProduct(laptop, 12); // 12-month warranty
+        var laptopWithWarranty = storeFacade.AddWarrantyToProduct(laptop, 12);
 
         var smartphoneWithFeatures = storeFacade.AddExtendedFeaturesToProduct(smartphone, "Waterproof");
 

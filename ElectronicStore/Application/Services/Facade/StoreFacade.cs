@@ -1,4 +1,6 @@
-﻿using Domain.Models.Orders;
+﻿using Domain.Abstractions;
+using Domain.Models.Customers;
+using Domain.Models.Orders;
 using Domain.Models.Products;
 
 namespace Application.Services.Facade;
@@ -12,20 +14,42 @@ public class StoreFacade
 {
     private List<IProduct> _availableProducts = new List<IProduct>();
     private Order _currentOrder;
-
+    private List<IObserver> _customers = new List<IObserver>();
+    
     public StoreFacade()
     {
         _currentOrder = new Order();
     }
-
+    public void RegisterCustomer(IObserver customer)
+    {
+        _customers.Add(customer);
+        Console.WriteLine($"Registered customer: {((Customer)customer).Name}");
+    }
+    
     public void AddProductToStore(IProduct product)
     {
+        if (product is Product productWithObservers)
+        {
+            foreach (var customer in _customers)
+            {
+                productWithObservers.AddObserver(customer); 
+            }
+        }
+
         _availableProducts.Add(product);
         Console.WriteLine($"Added {product.Name} to the store.");
     }
-
+    
     public void RemoveProductFromStore(IProduct product)
     {
+        if (product is Product productWithObservers)
+        {
+            foreach (var customer in _customers)
+            {
+                productWithObservers.RemoveObserver(customer); 
+            }
+        }
+
         _availableProducts.Remove(product);
         Console.WriteLine($"Removed {product.Name} from the store.");
     }
